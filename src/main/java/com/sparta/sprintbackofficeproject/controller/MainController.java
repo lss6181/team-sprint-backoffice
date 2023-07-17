@@ -12,13 +12,13 @@ import java.util.List;
 @RestController //뷰 만들기 전 임시
 public class MainController {
 
-    @GetMapping("/")
-    public List<PostResponseDto> Main(){
-//        if(){ //유저정보가 없을 경우
-//
-//        }else{// 유저정보가 있을 경우
-            return Postservice.getPosts();
-//        }
-    }
+//    @GetMapping("/")
+//    public List<PostResponseDto> Main(){
+////        if(){ //유저정보가 없을 경우
+////
+////        }else{// 유저정보가 있을 경우
+////            return Postservice.getPosts();
+////        }
+//    }
 
 }

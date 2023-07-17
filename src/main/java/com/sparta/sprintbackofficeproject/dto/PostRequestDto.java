@@ -1,4 +1,4 @@
 package com.sparta.sprintbackofficeproject.dto;
 
-public class Dto {
+public class PostRequestDto {
 }

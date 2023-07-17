@@ -22,8 +22,15 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Post getPostById(Long postId) {
-        return postRepository.findById(postId).orElse(null);
+    public Post getPostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물을 찾을 수 없습니다"));
+
+        // 조회수 증가
+        post.setViewCount(post.getViewCount() + 1);
+        postRepository.save(post);
+
+        return post;
     }
 
     public Post updatePost(Post post) {

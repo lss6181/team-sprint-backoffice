@@ -37,6 +37,9 @@ public class Post extends TimeStamped {
     )
     private Set<Tag> tags;
 
+    @Column(name = "view_count", nullable = false)
+    private Integer viewCount = 0;
+
     public Post(String content, User user, String imageUrl) {
         this.content = content;
         this.user = user;

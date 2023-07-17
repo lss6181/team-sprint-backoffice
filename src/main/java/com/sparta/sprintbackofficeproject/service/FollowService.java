@@ -44,6 +44,7 @@ public class FollowService {
 	}
 
 
+	@Transactional
 	public void unFollowing(UserDetailsImpl userDetails, Long followingId) {
 		// 토큰 체크
 		User followerUser = userDetails.getUser();

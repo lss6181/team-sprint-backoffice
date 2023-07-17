@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "likes_comment")
 public class LikeComment extends TimeStamped {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "like_comment_id")
 	private Long id;
 
 //	@ManyToOne(fetch = FetchType.LAZY)

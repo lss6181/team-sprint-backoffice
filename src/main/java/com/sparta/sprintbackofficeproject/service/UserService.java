@@ -32,6 +32,12 @@ public class UserService {
             throw new IllegalArgumentException("중복된 username 입니다.");
         }
 
+        // email 중복확인
+        Optional<User> checkEmail = userRepository.findByEmail(email);
+        if (checkEmail.isPresent()) {
+            throw new IllegalArgumentException("중복된 Email 입니다.");
+        }
+
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()) {

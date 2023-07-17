@@ -4,6 +4,8 @@ import com.sparta.sprintbackofficeproject.dto.SignupRequestDto;
 import com.sparta.sprintbackofficeproject.entity.User;
 import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
+import com.sparta.sprintbackofficeproject.util.EmailAuth;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final EmailAuth emailAuth;
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -50,5 +53,9 @@ public class UserService {
         // 사용자 등록
         User user = new User(username, password, email, role);
         userRepository.save(user);
+    }
+
+    public void sendEmail(String email) throws MessagingException {
+        emailAuth.createEmailForm(email);
     }
 }

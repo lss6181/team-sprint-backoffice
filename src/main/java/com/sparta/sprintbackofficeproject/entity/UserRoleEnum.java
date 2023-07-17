@@ -18,4 +18,9 @@ public enum UserRoleEnum {
         public static final String USER = "ROLE_USER";
         public static final String ADMIN = "ROLE_ADMIN";
     }
+
+    // @PreAuthorize에서 사용할 수 있는 메소드 추가
+    public String getRole() {
+        return name();
+    }
 }

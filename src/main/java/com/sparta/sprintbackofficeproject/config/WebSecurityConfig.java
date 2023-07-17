@@ -3,7 +3,7 @@ package com.sparta.sprintbackofficeproject.config;
 import com.sparta.sprintbackofficeproject.jwt.JwtUtil;
 import com.sparta.sprintbackofficeproject.security.JwtAuthenticationFilter;
 import com.sparta.sprintbackofficeproject.security.JwtAuthorizationFilter;
-import com.sparta.sprintbackofficeproject.security.LoginSuccessHandler;
+import com.sparta.sprintbackofficeproject.security.AuthenticationSuccessHandlerImpl;
 import com.sparta.sprintbackofficeproject.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return new LoginSuccessHandler();
+        return new AuthenticationSuccessHandlerImpl();
     }
 
     @Bean

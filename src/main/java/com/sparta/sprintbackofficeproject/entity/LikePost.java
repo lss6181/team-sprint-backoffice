@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.mapping.ToOne;
 
 @Entity
 @Getter
@@ -16,11 +17,11 @@ public class LikePost extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 }

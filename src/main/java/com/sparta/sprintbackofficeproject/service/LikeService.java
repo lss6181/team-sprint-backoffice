@@ -135,7 +135,7 @@ public class LikeService {
 	// 좋아요 누른 본인 아니고 관리자계정도 아닐 경우 true.
 	private boolean checkValidUser(User user, Long likeId) {
 		boolean result = !(user.getId() == likeId)
-				&& !(user.getRole().equals(UserRoleEnum.Authority.ADMIN));
+				&& !(user.getRole().equals(UserRoleEnum.ADMIN));
 		return result;
 	}
 }

@@ -5,30 +5,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table
+@Setter
 @NoArgsConstructor
-public class User {
-
+@Table(name = "users")
+public class User extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
-    @Column
+
+    @Column(nullable = false, unique = true)
     private String username;
-    @Column
+
+    @Column(nullable = false)
     private String password;
-    @Column
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column
-    private String introduction;
+
     @Column
     private String imageUrl;
 
-    //역할 컬럼
+    @Column
+    private String introduction;
 
-    @OneToMany(mappedBy = "user")
-    private List<Post> postList;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
+    public User(String username, String password, String email, UserRoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 }

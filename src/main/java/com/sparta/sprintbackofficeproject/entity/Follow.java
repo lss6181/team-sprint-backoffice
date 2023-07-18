@@ -1,26 +1,29 @@
 package com.sparta.sprintbackofficeproject.entity;
 
 import jakarta.persistence.*;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Table
 @NoArgsConstructor
+@Table(name = "follows")
 public class Follow {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "follow_id")
+	private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "following_user_id")
+	User followingUser;     // 팔로우 할 유저의 id
 
-    @OneToOne
-    @JoinColumn(name = "follower_id")
-    private User follower;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "follower_user_id")
+	User followerUser;      // 팔로우 하는 유저의 id
 
-    @OneToOne
-    @JoinColumn(name = "followee_id")
-    private User followee;
+	public Follow(User followingUser, User followerUser) {
+		this.followingUser = followingUser;
+		this.followerUser = followerUser;
+	}
 }

@@ -3,24 +3,29 @@ package com.sparta.sprintbackofficeproject.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.mapping.ToOne;
 
 @Entity
-@Getter
-@Table
 @NoArgsConstructor
-public class LikePost extends Timestamped{
+@Getter
+@Table(name = "likes_post")
+public class LikePost extends TimeStamped {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "like_post_id")
+	private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id")
+	private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+
+	public LikePost(Post post, User user) {
+		this.post = post;
+		this.user = user;
+	}
 }

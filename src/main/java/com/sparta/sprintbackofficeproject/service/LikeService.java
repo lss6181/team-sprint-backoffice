@@ -84,9 +84,6 @@ public class LikeService {
 			throw new IllegalArgumentException("Not Found Token");
 		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
 		// 좋아요 누른 댓글 find
 		Comment comment = commentRepository.findById(commentId)
 				.orElseThrow(() -> new IllegalArgumentException("Not Found Comment"));
@@ -102,9 +99,6 @@ public class LikeService {
 			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
 		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
 		likeCommentRepository.save(new LikeComment(comment, user));
 	}
 

@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -25,6 +28,9 @@ public class Comment extends TimeStamped {
 
     @Column(nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<LikeComment> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
 
     public Comment(Post post, CommentRequestDto requestDto, User user) {
 		this.post = post;

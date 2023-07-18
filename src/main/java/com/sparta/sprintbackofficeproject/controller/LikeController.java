@@ -34,21 +34,21 @@ public class LikeController {
 	}
 
 
-//	// 댓글 좋아요
-//	@PostMapping("/comments/{commentId}")
-//	public ResponseEntity<ApiException> onClickLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
-//
-//		likeService.onClickLikeComment(userDetails, commentId);
-//
-//		return ResponseEntity.ok().body(new ApiException("좋아요 성공", HttpStatus.OK.value()));
-//	}
-//
-//	// 댓글 좋아요 취소
-//	@DeleteMapping("/comments/{likeCommentId}")
-//	public ResponseEntity<ApiException> deleteLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long likeCommentId) {
-//
-//		likeService.deleteLikeComment(userDetails,likeCommentId);
-//
-//		return ResponseEntity.ok().body(new ApiException("좋아요 취소 성공", HttpStatus.OK.value()));
-//	}
+	// 댓글 좋아요
+	@PostMapping("/comments/{commentId}")
+	public ResponseEntity<ApiException> onClickLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
+
+		likeService.onClickLikeComment(userDetails, commentId);
+
+		return ResponseEntity.ok().body(new ApiException("좋아요 성공", HttpStatus.OK.value()));
+	}
+
+	// 댓글 좋아요 취소
+	@DeleteMapping("/comments/{likeCommentId}")
+	public ResponseEntity<ApiException> deleteLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long likeCommentId) {
+
+		likeService.deleteLikeComment(userDetails,likeCommentId);
+
+		return ResponseEntity.ok().body(new ApiException("좋아요 취소 성공", HttpStatus.OK.value()));
+	}
 }

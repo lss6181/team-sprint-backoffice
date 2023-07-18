@@ -1,12 +1,12 @@
 package com.sparta.sprintbackofficeproject.service;
 
-import com.sparta.sprintbackofficeproject.dto.PostListResponseDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
+import com.sparta.sprintbackofficeproject.entity.Post;
 import com.sparta.sprintbackofficeproject.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class Postservice {
@@ -17,9 +17,14 @@ public class Postservice {
         this.postRepository = postRepository;
     }
 
-    public PostListResponseDto getPosts(Long id) { //합친 후 수정
-        List<PostResponseDto> postList = postRepository.findPost1(id).stream().map(PostResponseDto::new).collect(Collectors.toList());
+    public List<PostResponseDto> getPosts(Long id) { //합친 후 수정
+        List<Post> postList = postRepository.findPost1(id);
+        List<PostResponseDto> responseDtoList = new ArrayList<>();
 
-        return new PostListResponseDto(postList);
+        for(Post post : postList){
+            responseDtoList.add(new PostResponseDto(post));
+        }
+
+        return responseDtoList;
     }
 }

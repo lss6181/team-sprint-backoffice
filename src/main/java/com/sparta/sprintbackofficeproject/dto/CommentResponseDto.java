@@ -14,11 +14,13 @@ public class CommentResponseDto extends ApiException {
     private String username;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private int likeCount;  // 좋아요 수 필드
 
     public CommentResponseDto(Comment comment) {
         this.content = comment.getContent();
         this.username = comment.getUser().getUsername();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+        this.likeCount = comment.getLikePostList().size();
     }
 }

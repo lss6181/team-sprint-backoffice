@@ -14,22 +14,16 @@ public class LikeComment extends TimeStamped {
 	@Column(name = "like_comment_id")
 	private Long id;
 
-	/**
-	 * 댓글 entity 취합 체크 및 주석해제 예정
-	 */
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "comment_id")
-//	private Comment comment;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "comment_id")
+	private Comment comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	/**
-	 * 댓글 entity 취합 체크 및 주석해제 예정
-	 */
-//	public LikeComment(Comment comment, User user) {
-//		this.comment = comment;
-//		this.user = user;
-//	}
+	public LikeComment(Comment comment, User user) {
+		this.comment = comment;
+		this.user = user;
+	}
 }

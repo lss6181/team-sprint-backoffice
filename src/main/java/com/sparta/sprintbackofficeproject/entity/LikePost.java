@@ -8,7 +8,6 @@ import org.hibernate.mapping.ToOne;
 
 @Entity
 @Getter
-@Setter
 @Table
 @NoArgsConstructor
 public class LikePost extends Timestamped{

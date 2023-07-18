@@ -34,6 +34,9 @@ public class Post extends TimeStamped {
     @Column
     private int Views;  //조회수 -> 특정 게시글 선택하여 볼 경우 조회수 + 1
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // 연관 관계 같이 삭제
+    private List<Comment> comment;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<LikePost> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
 

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Columns;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,11 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // 연관 관계 같이 삭제
     private List<Comment> comment;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<LikePost> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<TagUserInPost> tagUserInPostList = new ArrayList<>();  // 게시글에 태그한 유저 관계설정
 
 
     public Post(PostRequestDto requestDto) {

@@ -13,28 +13,6 @@ import java.util.List;
 
 @Entity
 @Getter
-<<<<<<< HEAD
-@Table
-@NoArgsConstructor
-public class Post extends Timestamped {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false)
-    private String content;
-    @Column
-    private String imageUrl;
-    @Column
-    private int views;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-//    @OneToMany(mappedBy = "post")
-//    private List<LikePost> likePostList;
-=======
 @NoArgsConstructor
 @Table(name = "post")
 public class Post extends TimeStamped {
@@ -81,5 +59,4 @@ public class Post extends TimeStamped {
     public void setViews() {
         this.Views = Views + 1;
     }
->>>>>>> 200c50e8ac1ff54d703f22c3ad48044492de778e
 }

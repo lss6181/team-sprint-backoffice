@@ -28,12 +28,11 @@ public class PostResponseDto extends ApiResponseDto{
         this.imageUrl = post.getImageUrl();
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
-<<<<<<< HEAD
-        this.user = post.getUser();
+//        this.user = post.getUser();
 //        for(LikePost likePost: post.getLikePostList()){
 //            this.likePostList.add(likePost);
 //        }
-=======
+
         this.modifiedAt = post.getModifiedAt();
         this.likeCount = post.getLikePostList().size(); // 좋아요 누른 게시글에 관계설정 한 likePostList.size()로 좋아요 갯수 표현
 //        if (!(post.getComments() == null)) {
@@ -44,6 +43,5 @@ public class PostResponseDto extends ApiResponseDto{
 //                    .toList();
 //        }
 
->>>>>>> 200c50e8ac1ff54d703f22c3ad48044492de778e
     }
 }

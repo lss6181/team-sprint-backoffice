@@ -40,10 +40,10 @@ public class LikeService {
 		}
 
 		// 중복 좋아요 방지
-		LikePost likePost = likePostRepository.findByPost_IdAndUser_Id(postId, user.getId());
-		if (likePost != null) {
-			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
-		}
+//		LikePost likePost = likePostRepository.findByPost_IdAndUser_Id(postId, user.getId());
+//		if (likePost != null) {
+//			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
+//		}
 
 
 		likePostRepository.save(new LikePost(post, user));
@@ -96,10 +96,10 @@ public class LikeService {
 //		}
 
 		// 중복 좋아요 방지
-		LikeComment likeComment = likeCommentRepository.findByComment_IdAndUser_Id(commentId, user.getId());
-		if (likeComment != null) {
-			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
-		}
+//		LikeComment likeComment = likeCommentRepository.findByComment_IdAndUser_Id(commentId, user.getId());
+//		if (likeComment != null) {
+//			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
+//		}
 
 		/**
 		 * Comment CRUD 취합되면 수정반영 예정

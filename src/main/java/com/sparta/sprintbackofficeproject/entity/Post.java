@@ -27,6 +27,6 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post")
-    private List<LikePost> likePostList;
+//    @OneToMany(mappedBy = "post")
+//    private List<LikePost> likePostList;
 }

@@ -18,7 +18,7 @@ public class Postservice {
     }
 
     public List<PostResponseDto> getPosts(Long id) { //합친 후 수정
-        List<Post> postList = postRepository.findPost1(id);
+        List<Post> postList = postRepository.findAllBy();
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
         for(Post post : postList){

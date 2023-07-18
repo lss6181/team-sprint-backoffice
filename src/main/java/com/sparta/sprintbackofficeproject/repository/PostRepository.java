@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-//    List<Post> findAllBy();
+    List<Post> findAllBy();
 
     @Query(value = "select p.id, p.created_at, p.content, p.image_url, p.views from post p " +
             "left join like_post lp on p.id = lp.post_id " +

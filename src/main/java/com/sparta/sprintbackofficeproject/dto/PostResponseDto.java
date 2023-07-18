@@ -14,7 +14,7 @@ public class PostResponseDto {
     private int views;
     private LocalDateTime createdAt;
     private User user;
-    private List<LikePost> likePostList;
+//    private List<LikePost> likePostList;
 
     public PostResponseDto(Post post){
         this.id = post.getId();
@@ -23,8 +23,8 @@ public class PostResponseDto {
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
         this.user = post.getUser();
-        for(LikePost likePost: post.getLikePostList()){
-            this.likePostList.add(likePost);
-        }
+//        for(LikePost likePost: post.getLikePostList()){
+//            this.likePostList.add(likePost);
+//        }
     }
 }

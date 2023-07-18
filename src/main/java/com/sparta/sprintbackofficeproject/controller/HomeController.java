@@ -10,7 +10,12 @@ import java.util.List;
 @RestController //뷰 만들기 전 임시
 public class HomeController {
 
-    Postservice postservice;
+    private final Postservice postservice;
+
+    public HomeController(Postservice postservice) {
+        this.postservice = postservice;
+    }
+
     @GetMapping("/")
     public List<PostResponseDto> Home(){
             return postservice.getPosts(1L);

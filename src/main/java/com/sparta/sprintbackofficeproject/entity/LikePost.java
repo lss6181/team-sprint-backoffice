@@ -14,22 +14,18 @@ public class LikePost extends TimeStamped {
 	@Column(name = "like_post_id")
 	private Long id;
 
-	/**
-	 * 게시글 entity 취합 체크 및 주석해제 예정
-	 */
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "post_id")
-//	private Post post;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id")
+	private Post post;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	/**
-	 * 게시글 entity 취합 체크 및 주석해제 예정
-	 */
-//	public LikePost(Post post, User user) {
-//		this.post = post;
-//		this.user = user;
-//	}
+
+	public LikePost(Post post, User user) {
+		this.post = post;
+		this.user = user;
+	}
 }

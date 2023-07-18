@@ -37,6 +37,9 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<LikePost> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<TagUserInPost> tagUserInPostList = new ArrayList<>();  // 게시글에 태그한 유저 관계설정
+
 
     public Post(PostRequestDto requestDto) {
         this.Content = requestDto.getContent();

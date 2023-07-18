@@ -59,4 +59,25 @@ public class PostController {
         }
     }
 
+    // 게시글에 user 태그
+    @PostMapping("/posts/{postId}/tag-user")
+    public ResponseEntity<ApiResponseDto> tagUserByUserName(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestParam String userName) {
+        try {
+            PostResponseDto result = postService.tagUserByUserName(userDetails.getUser(),postId, userName);
+            return ResponseEntity.ok().body(result);
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 태그 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+    // 게시글 태그 취소
+    @DeleteMapping("/posts/{tagUserInPostId}")
+    private ResponseEntity<ApiResponseDto> deleteTagUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long tagUserInPostId) {
+        try {
+            postService.deleteTagUser(userDetails.getUser(), tagUserInPostId);
+            return ResponseEntity.ok().body(new ApiResponseDto("태그 삭제 성공", HttpStatus.OK.value()));
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 }

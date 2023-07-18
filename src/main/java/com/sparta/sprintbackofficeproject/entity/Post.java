@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Columns;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -30,6 +32,9 @@ public class Post extends TimeStamped {
 
     @Column
     private int Views;  //조회수 -> 특정 게시글 선택하여 볼 경우 조회수 + 1
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // 연관 관계 같이 삭제
+    private List<Comment> comment;
 
 
 

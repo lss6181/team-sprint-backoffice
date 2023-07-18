@@ -1,8 +1,8 @@
 package com.sparta.sprintbackofficeproject.controller;
 
-import com.sparta.sprintbackofficeproject.dto.ApiResponseDto;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
+import com.sparta.sprintbackofficeproject.exception.ApiException;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import com.sparta.sprintbackofficeproject.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -39,23 +39,23 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<ApiResponseDto> updatePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestBody PostRequestDto requestDto) {
+    public ResponseEntity<ApiException> updatePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestBody PostRequestDto requestDto) {
         try {
             PostResponseDto result = postService.updatePost(postId, requestDto, userDetails.getUser());
             return ResponseEntity.ok().body(result);
         } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest().body(new ApiException("작성자만 수정 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     // 게시글 삭제
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<ApiResponseDto> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId) {
+    public ResponseEntity<ApiException> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId) {
         try {
             postService.deletePost(postId, userDetails.getUser());
-            return ResponseEntity.ok().body(new ApiResponseDto("게시글 삭제 성공", HttpStatus.OK.value()));
+            return ResponseEntity.ok().body(new ApiException("게시글 삭제 성공", HttpStatus.OK.value()));
         } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest().body(new ApiException("작성자만 삭제 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 

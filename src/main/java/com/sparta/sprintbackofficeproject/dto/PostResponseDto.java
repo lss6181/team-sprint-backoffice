@@ -1,15 +1,17 @@
 package com.sparta.sprintbackofficeproject.dto;
 
 import com.sparta.sprintbackofficeproject.entity.Post;
-import com.sparta.sprintbackofficeproject.entity.User;
+import com.sparta.sprintbackofficeproject.exception.ApiException;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 @Getter
 @Setter
-public class PostResponseDto extends ApiResponseDto{
+public class PostResponseDto extends ApiException {
 
     private Long Id;
     private String UserName;
@@ -18,7 +20,7 @@ public class PostResponseDto extends ApiResponseDto{
     private Integer views;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-//    private List<CommentResponseDto> comments;
+    private List<CommentResponseDto> comments;
 
     public PostResponseDto(Post post) {
         this.Id = post.getId();
@@ -28,13 +30,12 @@ public class PostResponseDto extends ApiResponseDto{
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
-//        if (!(post.getComments() == null)) {
-//            this.comments = post.getComments().stream()
-//                    .map(CommentResponseDto::new)
-//                    .sorted(Comparator.comparing(CommentResponseDto::getCreatedAt).reversed()) // 작성날짜 내림차순 - reversed,
-//                    // getCreatedAt - 작성일자, comparing - 비교 연산자, sorted - 정렬
-//                    .toList();
-//        }
+        if (!(post.getComment() == null)) {
+            this.comments = post.getComment().stream()
+                    .map(CommentResponseDto::new)
+                    .sorted(Comparator.comparing(CommentResponseDto::getCreatedAt).reversed())
+                    .toList();
+        }
 
     }
 }

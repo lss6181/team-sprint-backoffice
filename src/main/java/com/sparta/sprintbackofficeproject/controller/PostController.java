@@ -60,7 +60,7 @@ public class PostController {
     }
 
     // 게시글에 user 태그
-    @PostMapping("/posts/{postId}/tag-user")
+    @PostMapping("/posts/tag-user/{postId}")
     public ResponseEntity<ApiResponseDto> tagUserByUserName(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestParam String userName) {
         try {
             PostResponseDto result = postService.tagUserByUserName(userDetails.getUser(),postId, userName);
@@ -71,7 +71,7 @@ public class PostController {
     }
 
     // 게시글 태그 취소
-    @DeleteMapping("/posts/{tagUserInPostId}")
+    @DeleteMapping("/posts/tag-user/{tagUserInPostId}")
     private ResponseEntity<ApiResponseDto> deleteTagUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long tagUserInPostId) {
         try {
             postService.deleteTagUser(userDetails.getUser(), tagUserInPostId);

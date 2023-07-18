@@ -56,6 +56,8 @@ public class PostService {
         post.setContent(requestDto.getContent());
         post.setImageUrl(requestDto.getImageUrl());
 
+		postRepository.save(post);
+
         return new PostResponseDto(post);
     }
 
@@ -85,6 +87,13 @@ public class PostService {
 		// 태그한 게시글 find
 		Post post = postRepository.findById(postId)
 				.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+		// 중복 태그 방지
+		TagUserInPost tagUserInPost = tagUserInPostRepository.findByUser_IdAndPost_Id(tagUser.getId(), post.getId());
+		if (tagUserInPost != null) {
+			throw new IllegalArgumentException("태그 중복 불가!");
+		}
+
 
 		tagUserInPostRepository.save(new TagUserInPost(tagUser, post));
 

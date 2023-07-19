@@ -1,5 +1,6 @@
 package com.sparta.sprintbackofficeproject.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.sprintbackofficeproject.dto.EmailRequestDto;
 import com.sparta.sprintbackofficeproject.dto.SignupRequestDto;
 import com.sparta.sprintbackofficeproject.exception.ApiException;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiException> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiException> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) throws MessagingException, JsonProcessingException {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if(fieldErrors.size()> 0 ){
             for (FieldError fieldError : fieldErrors){
@@ -39,11 +41,16 @@ public class UserController {
             }
         }
         userService.signup(requestDto);
-        return ResponseEntity.ok().body(new ApiException("회원가입 성공", HttpStatus.OK.value()));
+        return ResponseEntity.ok().body(new ApiException("인증코드가 발송되었습니다.", HttpStatus.OK.value()));
     }
 
     @PostMapping("/signup/email-auth")
-    public void emailAuth(@RequestBody EmailRequestDto requestDto) throws MessagingException {
-        userService.sendEmail(requestDto.getEmail());
+    public ResponseEntity<ApiException> verifyCode(@RequestBody EmailRequestDto requestDto) throws IOException {
+        if (userService.verifyCode(requestDto.getEmail(), requestDto.getCode())) {
+
+            return ResponseEntity.ok().body(new ApiException("회원가입이 완료되었습니다.", HttpStatus.OK.value()));
+        }
+        userService.saveUserAfterVerify(requestDto.getEmail());
+        return ResponseEntity.badRequest().body(new ApiException("인증 코드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
     }
 }

@@ -5,6 +5,7 @@ import com.sparta.sprintbackofficeproject.entity.User;
 import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
 import com.sparta.sprintbackofficeproject.util.EmailAuth;
+import com.sparta.sprintbackofficeproject.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +21,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailAuth emailAuth;
+    private final RedisUtil redisUtil;
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public void signup(SignupRequestDto requestDto) {
+    public void signup(SignupRequestDto requestDto) throws MessagingException {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String email = requestDto.getEmail();
@@ -53,9 +55,22 @@ public class UserService {
         // 사용자 등록
         User user = new User(username, password, email, role);
         userRepository.save(user);
+
+        emailAuth.sendEmail(email);
     }
 
-    public void sendEmail(String email) throws MessagingException {
-        emailAuth.createEmailForm(email);
+    public Boolean verifyCode(String email, String code) {
+        String codeFindByEmail = redisUtil.getData(email);
+        if (codeFindByEmail == null) {
+            return false;
+        }
+        return codeFindByEmail.equals(code);
+    }
+
+    public void saveUserAfterVerify(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            userRepository.delete(user);
+        }
     }
 }

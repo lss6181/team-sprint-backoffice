@@ -1,5 +1,6 @@
 package com.sparta.sprintbackofficeproject.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class EmailAuth {
     private final JavaMailSender mailSender;
+    private final RedisUtil redisUtil;
 
     // 인증코드 8자리 무작위 생성
     public String createCode() {
@@ -37,7 +39,7 @@ public class EmailAuth {
     }
 
     // 메일 양식 작성
-    public void createEmailForm(String email) throws MessagingException {
+    public void sendEmail(String email) throws MessagingException {
         String authCode = createCode();
         String setFrom = "Sprint";
         String toEmail = email;
@@ -65,5 +67,7 @@ public class EmailAuth {
         message.setText(msgOfEmail, "utf-8", "html");
 
         mailSender.send(message);
+
+        redisUtil.setDataExpire(email, authCode, 300);
     }
 }

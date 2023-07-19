@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @Service
@@ -21,6 +23,18 @@ public class PostService {
 	private final UserRepository userRepository;
 	private final TagUserInPostRepository tagUserInPostRepository;
 	private final HashTagRepository hashTagRepository;
+
+    //전체 게시글 조회하기
+    public List<PostResponseDto> getPosts(User user) {
+        List<Post> postList = postRepository.findPost1(user.getId());
+        List<PostResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Post post : postList){
+            responseDtoList.add(new PostResponseDto(post));
+        }
+
+        return responseDtoList;
+    }
 
     @Transactional
     // 특정 게시글 조회
@@ -152,6 +166,4 @@ public class PostService {
                 new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.")
         );
     }
-
-
 }

@@ -43,6 +43,9 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<TagUserInPost> tagUserInPostList = new ArrayList<>();  // 게시글에 태그한 유저 관계설정
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<HashTag> hashTagList = new ArrayList<>();  // 게시글의 해쉬태그 관계설정
+
 
     public Post(PostRequestDto requestDto) {
         this.Content = requestDto.getContent();

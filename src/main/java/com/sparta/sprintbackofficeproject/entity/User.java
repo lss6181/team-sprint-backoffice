@@ -1,5 +1,6 @@
 package com.sparta.sprintbackofficeproject.entity;
 
+import com.sparta.sprintbackofficeproject.dto.ModifyRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,5 +55,13 @@ public class User extends TimeStamped {
         this.username = username;
         this.imageUrl = imageUrl;
         return this;
+    }
+
+    // 유저 정보 수정
+    public void modifyProfile(ModifyRequestDto modifyRequestDto) {
+        this.email = modifyRequestDto.getEmail();
+        this.imageUrl = modifyRequestDto.getImageUrl();
+        this.introduction = modifyRequestDto.getIntroduction();
+        this.password = modifyRequestDto.getPassword();
     }
 }

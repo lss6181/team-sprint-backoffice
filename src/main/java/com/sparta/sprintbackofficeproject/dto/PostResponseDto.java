@@ -25,6 +25,7 @@ public class PostResponseDto extends ApiException {
     private List<CommentResponseDto> comments;
     private int likeCount;  // 좋아요 수 필드
     private List<TagUserResponseDto> tagUsers;    // 태그한 유저들
+    private List<HashTagResponseDto> hashTags;  // 해쉬태그 필드
 
     public PostResponseDto(Post post) {
         this.Id = post.getId();
@@ -46,9 +47,15 @@ public class PostResponseDto extends ApiException {
                     .toList();
         }
         this.likeCount = post.getLikePostList().size(); // 좋아요 누른 게시글에 관계설정 한 likePostList.size()로 좋아요 갯수 표현
-        this.tagUsers = post.getTagUserInPostList().stream()
-                .map(TagUserResponseDto::new)
-                .collect(Collectors.toList());  // 태그한 유저들 조회
-
+        if (!(post.getHashTagList() == null)) {
+            this.tagUsers = post.getTagUserInPostList().stream()
+                    .map(TagUserResponseDto::new)
+                    .collect(Collectors.toList());  // 태그한 유저들 조회
+        }
+        if (!(post.getHashTagList()==null)) {
+			this.hashTags = post.getHashTagList().stream()
+					.map(HashTagResponseDto::new)
+					.collect(Collectors.toList());  // 해쉬태그
+        }
     }
 }

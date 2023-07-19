@@ -34,11 +34,6 @@ public class PostResponseDto extends ApiException {
         this.imageUrl = post.getImageUrl();
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
-//        this.user = post.getUser();
-//        for(LikePost likePost: post.getLikePostList()){
-//            this.likePostList.add(likePost);
-//        }
-
         this.modifiedAt = post.getModifiedAt();
         if (!(post.getComment() == null)) {
             this.comments = post.getComment().stream()

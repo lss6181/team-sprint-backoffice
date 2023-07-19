@@ -2,10 +2,8 @@ package com.sparta.sprintbackofficeproject.service;
 
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
-import com.sparta.sprintbackofficeproject.entity.Post;
-import com.sparta.sprintbackofficeproject.entity.TagUserInPost;
-import com.sparta.sprintbackofficeproject.entity.User;
-import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
+import com.sparta.sprintbackofficeproject.entity.*;
+import com.sparta.sprintbackofficeproject.repository.HashTagRepository;
 import com.sparta.sprintbackofficeproject.repository.PostRepository;
 import com.sparta.sprintbackofficeproject.repository.TagUserInPostRepository;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
@@ -22,6 +20,7 @@ public class PostService {
     private final PostRepository postRepository;
 	private final UserRepository userRepository;
 	private final TagUserInPostRepository tagUserInPostRepository;
+	private final HashTagRepository hashTagRepository;
 
     @Transactional
     // 특정 게시글 조회
@@ -74,7 +73,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-	// 게시글에 유저 태그
+	// 게시글에 user 태그
 	public PostResponseDto tagUserByUserName(User user, Long postId, String userName) {
 		// 태그 입력한 userName 가져오기
 		User tagUser = userRepository.findByUsername(userName)
@@ -101,16 +100,49 @@ public class PostService {
 		return new PostResponseDto(post);
 	}
 
+	// user 태그 삭제
 	public void deleteTagUser(User user, Long tagUserInPostId) {
+		// 삭제할 태그 find
 		TagUserInPost tagUser = tagUserInPostRepository.findById(tagUserInPostId)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지않는 태그 입니다."));
 
 		// 태그 한 자와 현재 로그인 사용자가 같은지 또는 Admin 인지 체크 (아니면 예외발생)
-		if (!(user.getRole().equals(UserRoleEnum.ADMIN) || tagUser.getPost().getUser().equals(user))) {
+		if (!(user.getRole().equals(UserRoleEnum.ADMIN) || tagUser.getPost().getUser().getId().equals(user.getId()))) {
 			throw new RejectedExecutionException();
 		}
 
 		tagUserInPostRepository.delete(tagUser);
+	}
+
+	// 게시글 해쉬태그
+	public PostResponseDto hashTag(User user, Long postId, String hashTag) {
+		//태그한 게시글 find
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+		// 중복 태그 방지
+		HashTag overlapHashTag = hashTagRepository.findByPost_IdAndHashTag(postId, hashTag);
+		if (overlapHashTag != null) {
+			throw new IllegalArgumentException("이미 태그한 내용 입니다.");
+		}
+
+		hashTagRepository.save(new HashTag(hashTag, post));
+
+		return new PostResponseDto(post);
+	}
+
+	// 해쉬태그 삭제
+	public void deleteHashTag(User user, Long hashTagId) {
+		// 삭제할 태그 find
+		HashTag hashTag = hashTagRepository.findById(hashTagId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그 입니다."));
+
+		// 태그 한 자와 현재 로그인 사용자가 같은지 또는 Admin 인지 체크 (아니면 예외발생)
+		if (!(user.getRole().equals(UserRoleEnum.ADMIN) || hashTag.getPost().getUser().getId().equals(user.getId()))) {
+			throw new RejectedExecutionException();
+		}
+
+		hashTagRepository.delete(hashTag);
 	}
 
 

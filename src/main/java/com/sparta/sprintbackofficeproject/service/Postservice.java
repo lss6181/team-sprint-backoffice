@@ -31,8 +31,8 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-    public List<PostResponseDto> getPosts(Long id) {
-        List<Post> postList = postRepository.findPost1(id);
+    public List<PostResponseDto> getPosts(User user) {
+        List<Post> postList = postRepository.findPost1(user.getId());
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
         for(Post post : postList){

@@ -20,8 +20,8 @@ public class HomeController {
 
     //전체 게시글 조회
     @GetMapping("/")
-    public List<PostResponseDto> Home(){
-            return postservice.getPosts(1L);
+    public List<PostResponseDto> Home(@AuthenticationPrincipal UserDetailsImpl userDetails){
+            return postservice.getPosts(userDetails.getUser());
     }
 
 }

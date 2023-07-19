@@ -30,7 +30,7 @@ public class Comment extends TimeStamped {
     private String content;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<LikeComment> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
+    private List<LikeComment> likeCommentList = new ArrayList<>();    // 좋아요 연관관계 설정
 
     public Comment(Post post, CommentRequestDto requestDto, User user) {
 		this.post = post;

@@ -70,11 +70,33 @@ public class PostController {
         }
     }
 
-    // 게시글 태그 취소
+    // 게시글 user 태그 취소
     @DeleteMapping("/posts/tag-user/{tagUserInPostId}")
     private ResponseEntity<ApiException> deleteTagUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long tagUserInPostId) {
         try {
             postService.deleteTagUser(userDetails.getUser(), tagUserInPostId);
+            return ResponseEntity.ok().body(new ApiException("태그 삭제 성공", HttpStatus.OK.value()));
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiException("작성자만 삭제 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+    // 게시글 hash tag
+    @PostMapping("/posts/hash-tag/{postId}")
+    public ResponseEntity<ApiException> hashTag(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestParam String hashTag) {
+        try {
+            PostResponseDto result = postService.hashTag(userDetails.getUser(), postId, hashTag);
+            return ResponseEntity.ok().body(result);
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiException("작성자만 태그 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+    // hash tag 삭제
+    @DeleteMapping("/posts/hash-tag/{hashTagId}")
+    public ResponseEntity<ApiException> deleteHashTag(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long hashTagId) {
+        try {
+            postService.deleteHashTag(userDetails.getUser(), hashTagId);
             return ResponseEntity.ok().body(new ApiException("태그 삭제 성공", HttpStatus.OK.value()));
         } catch (RejectedExecutionException e) {
             return ResponseEntity.badRequest().body(new ApiException("작성자만 삭제 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));

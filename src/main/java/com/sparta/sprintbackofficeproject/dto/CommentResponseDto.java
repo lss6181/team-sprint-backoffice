@@ -21,6 +21,6 @@ public class CommentResponseDto extends ApiException {
         this.username = comment.getUser().getUsername();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
-        this.likeCount = comment.getLikePostList().size();
+        this.likeCount = comment.getLikeCommentList().size();
     }
 }

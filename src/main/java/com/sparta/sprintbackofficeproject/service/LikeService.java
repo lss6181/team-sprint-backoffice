@@ -2,6 +2,7 @@ package com.sparta.sprintbackofficeproject.service;
 
 
 import com.sparta.sprintbackofficeproject.entity.*;
+import com.sparta.sprintbackofficeproject.repository.CommentRepository;
 import com.sparta.sprintbackofficeproject.repository.LikeCommentRepository;
 import com.sparta.sprintbackofficeproject.repository.LikePostRepository;
 import com.sparta.sprintbackofficeproject.repository.PostRepository;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LikeService {
 	private final PostRepository postRepository;
-	//	private final CommentRepository commentRepository;
+	private final CommentRepository commentRepository;
 	private final LikePostRepository likePostRepository;
 	private final LikeCommentRepository likeCommentRepository;
 
@@ -83,17 +84,14 @@ public class LikeService {
 			throw new IllegalArgumentException("Not Found Token");
 		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
-//		// 좋아요 누른 댓글 find
-//		Comment comment = commentRepository.findById(commentId)
-//				.orElseThrow(() -> new IllegalArgumentException("Not Found Comment");
-//
-//		// 좋아요 누른 댓글이 로그인 사용자 본인 게시글이면 좋아요 불가능
-//		if (user.getId().equals(comment.getUser().getId())) {
-//			throw new IllegalArgumentException("본인 댓글에 좋아요 불가능 합니다.");
-//		}
+		// 좋아요 누른 댓글 find
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new IllegalArgumentException("Not Found Comment"));
+
+		// 좋아요 누른 댓글이 로그인 사용자 본인 댓글이면 좋아요 불가능
+		if (user.getId().equals(comment.getUser().getId())) {
+			throw new IllegalArgumentException("본인 댓글에 좋아요 불가능 합니다.");
+		}
 
 		// 중복 좋아요 방지
 //		LikeComment likeComment = likeCommentRepository.findByComment_IdAndUser_Id(commentId, user.getId());
@@ -101,10 +99,7 @@ public class LikeService {
 //			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
 //		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
-//		likeCommentRepository.save(new LikeComment(comment, user));
+		likeCommentRepository.save(new LikeComment(comment, user));
 	}
 
 

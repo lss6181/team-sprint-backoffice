@@ -1,10 +1,12 @@
 package com.sparta.sprintbackofficeproject.config;
 
 import com.sparta.sprintbackofficeproject.jwt.JwtUtil;
+import com.sparta.sprintbackofficeproject.security.AuthenticationSuccessHandlerImpl;
 import com.sparta.sprintbackofficeproject.security.JwtAuthenticationFilter;
 import com.sparta.sprintbackofficeproject.security.JwtAuthorizationFilter;
-import com.sparta.sprintbackofficeproject.security.AuthenticationSuccessHandlerImpl;
 import com.sparta.sprintbackofficeproject.security.UserDetailsServiceImpl;
+import com.sparta.sprintbackofficeproject.socialLogin.CustomOAuth2UserService;
+import com.sparta.sprintbackofficeproject.socialLogin.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,13 +23,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,6 +45,10 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return new AuthenticationSuccessHandlerImpl();
+    }
+
+    private AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new OAuth2SuccessHandler(jwtUtil);
     }
 
     @Bean
@@ -72,6 +79,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/**").permitAll() // 모든 요청 접근 허가
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
+        http.oauth2Login().successHandler(authenticationSuccessHandler()).userInfoEndpoint().userService(customOAuth2UserService);
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

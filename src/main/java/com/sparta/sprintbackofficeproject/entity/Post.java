@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -39,6 +37,14 @@ public class Post extends TimeStamped {
 
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
+
+    @ManyToMany
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likes;
 
     public Post(String content, User user, String imageUrl) {
         this.content = content;

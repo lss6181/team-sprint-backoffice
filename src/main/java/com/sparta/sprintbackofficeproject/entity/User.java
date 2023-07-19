@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,6 +37,9 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    @ManyToMany(mappedBy = "likes")
+    private Set<Post> likedPosts;
 
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;

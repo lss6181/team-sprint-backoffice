@@ -1,8 +1,11 @@
 package com.sparta.sprintbackofficeproject.service;
 
 import com.sparta.sprintbackofficeproject.entity.Post;
+import com.sparta.sprintbackofficeproject.entity.PostStats;
 import com.sparta.sprintbackofficeproject.repository.PostRepository;
+import com.sparta.sprintbackofficeproject.repository.PostStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +15,12 @@ import java.util.NoSuchElementException;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostStatsRepository postStatsRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, PostStatsRepository postStatsRepository) {
         this.postRepository = postRepository;
+        this.postStatsRepository = postStatsRepository;
     }
 
     public List<Post> getAllPosts() {

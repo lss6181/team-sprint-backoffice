@@ -1,66 +1,66 @@
 package com.sparta.sprintbackofficeproject.entity;
 
+import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
-@Table(name = "posts")
+@Table(name = "post")
 public class Post extends TimeStamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private Long id;
+    private Long Id;  // postId
 
-    @Column(nullable = false)
-    private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "User_Id")  // 유저 고유 식별 고유 Id
     private User user;
 
     @Column
-    private String imageUrl;
+    private String Content;  // 게시글 내용
 
-    @ManyToMany
-    @JoinTable(
-            name = "post_tags",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private Set<Tag> tags;
+    @Column
+    private String ImageUrl; //게시글 사진
 
-    @Column(name = "view_count", nullable = false)
-    private Integer viewCount = 0;
+    @Column
+    private int Views;  //조회수 -> 특정 게시글 선택하여 볼 경우 조회수 + 1
 
-    @ManyToMany
-    @JoinTable(
-            name = "likes",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> likes;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // 연관 관계 같이 삭제
+    private List<Comment> comment;
 
-    public Post(String content, User user, String imageUrl) {
-        this.content = content;
-        this.user = user;
-        this.imageUrl = imageUrl;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<LikePost> likePostList = new ArrayList<>();    // 좋아요 연관관계 설정
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<TagUserInPost> tagUserInPostList = new ArrayList<>();  // 게시글에 태그한 유저 관계설정
+
+
+    public Post(PostRequestDto requestDto) {
+        this.Content = requestDto.getContent();
+        this.ImageUrl = requestDto.getImageUrl();
     }
 
-    // 태그 추가 메소드
-    public void addTag(Tag tag) {
-        this.tags.add(tag);
-        tag.getPosts().add(this);
+    public void setUser(User user) {
+        this.user =  user;
     }
 
-    // 태그 제거 메소드
-    public void removeTag(Tag tag) {
-        this.tags.remove(tag);
-        tag.getPosts().remove(this);
+    public void setContent(String content) {
+        this.Content = content;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.ImageUrl = imageUrl;
+    }
+
+    // 특정 게시글 조회시 조회 카운트 증가
+    public void setViews() {
+        this.Views = Views + 1;
     }
 }

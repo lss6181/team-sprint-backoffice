@@ -1,12 +1,11 @@
 package com.sparta.sprintbackofficeproject.service;
 
 
-import com.sparta.sprintbackofficeproject.entity.LikeComment;
-import com.sparta.sprintbackofficeproject.entity.LikePost;
-import com.sparta.sprintbackofficeproject.entity.User;
-import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
+import com.sparta.sprintbackofficeproject.entity.*;
+import com.sparta.sprintbackofficeproject.repository.CommentRepository;
 import com.sparta.sprintbackofficeproject.repository.LikeCommentRepository;
 import com.sparta.sprintbackofficeproject.repository.LikePostRepository;
+import com.sparta.sprintbackofficeproject.repository.PostRepository;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
-//	private final PostRepository postRepository;
-//	private final CommentRepository commentRepository;
+	private final PostRepository postRepository;
+	private final CommentRepository commentRepository;
 	private final LikePostRepository likePostRepository;
 	private final LikeCommentRepository likeCommentRepository;
 
@@ -32,28 +31,23 @@ public class LikeService {
 			throw new IllegalArgumentException("Not Found Token");
 		}
 
-		/**
-		 * Post CRUD 취합되면 수정반영 예정
-		 */
-//		// 좋아요 누른 게시글 find
-//		Post post = postRepository.findById(postId)
-//				.orElseThrow(() -> new IllegalArgumentException("Not Found Post");
-//
-//		// 좋아요 누른 게시글이 로그인 사용자 본인 게시글이면 좋아요 불가능
-//		if (user.getId().equals(post.getUser().getId())) {
-//			throw new IllegalArgumentException("본인 게시글에 좋아요 불가능 합니다.");
-//		}
+		// 좋아요 누른 게시글 find
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new IllegalArgumentException("Not Found Post"));
+
+		// 좋아요 누른 게시글이 로그인 사용자 본인 게시글이면 좋아요 불가능
+		if (user.getId().equals(post.getUser().getId())) {
+			throw new IllegalArgumentException("본인 게시글에 좋아요 불가능 합니다.");
+		}
 
 		// 중복 좋아요 방지
 		LikePost likePost = likePostRepository.findByPost_IdAndUser_Id(postId, user.getId());
-		if (likePost != null){
+		if (likePost != null) {
 			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
 		}
 
-		/**
-		 * Post CRUD 취합되면 수정반영 예정
-		 */
-//		likePostRepository.save(new LikePost(post, user));
+
+		likePostRepository.save(new LikePost(post, user));
 	}
 
 
@@ -69,7 +63,7 @@ public class LikeService {
 
 		// likePostId로 누른 좋아요 찾아오기
 		LikePost likePost = likePostRepository.findById(likePostId)
-				.orElseThrow(()-> new IllegalArgumentException("좋아요를 누르지 않았습니다."));
+				.orElseThrow(() -> new IllegalArgumentException("좋아요를 누르지 않았습니다."));
 
 		// 좋아요 누른 본인이거나 admin일경우만 삭제가능하도록 체크
 		if (this.checkValidUser(user, likePost.getUser().getId())) {
@@ -90,28 +84,22 @@ public class LikeService {
 			throw new IllegalArgumentException("Not Found Token");
 		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
-//		// 좋아요 누른 댓글 find
-//		Comment comment = commentRepository.findById(commentId)
-//				.orElseThrow(() -> new IllegalArgumentException("Not Found Comment");
-//
-//		// 좋아요 누른 댓글이 로그인 사용자 본인 게시글이면 좋아요 불가능
-//		if (user.getId().equals(comment.getUser().getId())) {
-//			throw new IllegalArgumentException("본인 댓글에 좋아요 불가능 합니다.");
-//		}
+		// 좋아요 누른 댓글 find
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new IllegalArgumentException("Not Found Comment"));
+
+		// 좋아요 누른 댓글이 로그인 사용자 본인 댓글이면 좋아요 불가능
+		if (user.getId().equals(comment.getUser().getId())) {
+			throw new IllegalArgumentException("본인 댓글에 좋아요 불가능 합니다.");
+		}
 
 		// 중복 좋아요 방지
 		LikeComment likeComment = likeCommentRepository.findByComment_IdAndUser_Id(commentId, user.getId());
-		if (likeComment != null){
+		if (likeComment != null) {
 			throw new IllegalArgumentException("좋아요를 이미 누르셨습니다.");
 		}
 
-		/**
-		 * Comment CRUD 취합되면 수정반영 예정
-		 */
-//		likeCommentRepository.save(new LikeComment(comment, user));
+		likeCommentRepository.save(new LikeComment(comment, user));
 	}
 
 
@@ -127,7 +115,7 @@ public class LikeService {
 
 		// likeCommentId로 누른 좋아요 찾아오기
 		LikeComment likeComment = likeCommentRepository.findById(likeCommentId)
-				.orElseThrow(()-> new IllegalArgumentException("좋아요를 누르지 않았습니다."));
+				.orElseThrow(() -> new IllegalArgumentException("좋아요를 누르지 않았습니다."));
 
 		// 좋아요 누른 본인이거나 admin일 경우만 삭제가능하도록 체크
 		if (this.checkValidUser(user, likeComment.getUser().getId())) {
@@ -141,8 +129,8 @@ public class LikeService {
 	// 삭제 권한여부 검증
 	// 좋아요 누른 본인 아니고 관리자계정도 아닐 경우 true.
 	private boolean checkValidUser(User user, Long likeId) {
-		boolean result = !(user.getId()==likeId)
-				&& !(user.getRole().equals(UserRoleEnum.Authority.ADMIN));
+		boolean result = !(user.getId() == likeId)
+				&& !(user.getRole().equals(UserRoleEnum.ADMIN));
 		return result;
 	}
 }

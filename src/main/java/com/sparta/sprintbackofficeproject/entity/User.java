@@ -1,16 +1,13 @@
 package com.sparta.sprintbackofficeproject.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "users")
 public class User extends TimeStamped {
@@ -22,10 +19,10 @@ public class User extends TimeStamped {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 
     @Column
@@ -41,10 +38,24 @@ public class User extends TimeStamped {
     @ManyToMany(mappedBy = "likes")
     private Set<Post> likedPosts;
 
+    @Builder
+    public User(String username, String password, String email, String imageUrl, UserRoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.role = role;
+    }
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    public User update(String username, String imageUrl) {
+        this.username = username;
+        this.imageUrl = imageUrl;
+        return this;
     }
 }

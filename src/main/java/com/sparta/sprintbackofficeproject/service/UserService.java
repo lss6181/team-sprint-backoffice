@@ -1,11 +1,10 @@
 package com.sparta.sprintbackofficeproject.service;
 
-import com.sparta.sprintbackofficeproject.dto.ModifyRequestDto;
-import com.sparta.sprintbackofficeproject.dto.ModifyResponseDto;
-import com.sparta.sprintbackofficeproject.dto.SignupRequestDto;
-import com.sparta.sprintbackofficeproject.dto.UserProfileResponseDto;
+import com.sparta.sprintbackofficeproject.dto.*;
+import com.sparta.sprintbackofficeproject.entity.Follow;
 import com.sparta.sprintbackofficeproject.entity.User;
 import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
+import com.sparta.sprintbackofficeproject.repository.FollowRepository;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
 import com.sparta.sprintbackofficeproject.util.EmailAuth;
 import com.sparta.sprintbackofficeproject.util.RedisUtil;
@@ -16,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -25,6 +26,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final EmailAuth emailAuth;
     private final RedisUtil redisUtil;
 
@@ -79,10 +81,25 @@ public class UserService {
     }
 
     // 유저 프로필 조회
-    public UserProfileResponseDto getUserProfile(Long userId) {
+    public UserProfileResponseDto getUserProfile(User user, Long userId) {
         User targetUser = findUser(userId);
+
+        // targetUser의 팔로잉
+        List<String> followingUsers = new ArrayList<>();
+        List<Follow> followings = followRepository.findAllByFollowerUser(targetUser);
+        for (Follow follow : followings) {
+            followingUsers.add(follow.getFollowingUser().getUsername());
+        }
+
+        // targetUser의 팔로워
+        List<String> followerUsers = new ArrayList<>();
+        List<Follow> followers = followRepository.findAllByFollowingUser(targetUser);
+        for (Follow follow : followers) {
+            followerUsers.add(follow.getFollowerUser().getUsername());
+        }
+
         return new UserProfileResponseDto(targetUser.getId(),
-                targetUser.getUsername(), targetUser.getEmail(), targetUser.getImageUrl(), targetUser.getIntroduction());
+                targetUser.getUsername(), targetUser.getEmail(), targetUser.getImageUrl(), targetUser.getIntroduction(), followingUsers, followerUsers);
     }
 
     // 유저 정보 수정

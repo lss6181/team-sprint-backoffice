@@ -54,8 +54,8 @@ public class UserController {
 
     // 프로필 조회
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<ApiException> getUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId) {
-        UserProfileResponseDto result = userService.getUserProfile(userDetails.getUser(), userId);
+    public ResponseEntity<ApiException> getUserProfile(@PathVariable Long userId) {
+        UserProfileResponseDto result = userService.getUserProfile(userId);
         return ResponseEntity.ok().body(result);
 
     }

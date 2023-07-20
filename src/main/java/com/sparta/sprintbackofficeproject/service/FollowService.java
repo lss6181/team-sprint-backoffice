@@ -2,10 +2,13 @@ package com.sparta.sprintbackofficeproject.service;
 
 import com.sparta.sprintbackofficeproject.entity.Follow;
 import com.sparta.sprintbackofficeproject.entity.User;
+import com.sparta.sprintbackofficeproject.exception.ApiException;
 import com.sparta.sprintbackofficeproject.repository.FollowRepository;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +20,7 @@ public class FollowService {
 
 
 	@Transactional
-	public void following(UserDetailsImpl userDetails, Long followingId) {
+	public ResponseEntity<ApiException> following(UserDetailsImpl userDetails, Long followingId) {
 		// 토큰 체크
 		User followerUser = userDetails.getUser();
 
@@ -41,11 +44,13 @@ public class FollowService {
 		}
 
 		followRepository.save(new Follow(followingUser, followerUser));
+
+		return ResponseEntity.ok().body(new ApiException("팔로우 성공. 유저이름 : " + followingUser.getUsername(), HttpStatus.OK.value()));
 	}
 
 
 	@Transactional
-	public void unFollowing(UserDetailsImpl userDetails, Long followingId) {
+	public ResponseEntity<ApiException> unFollowing(UserDetailsImpl userDetails, Long followingId) {
 		// 토큰 체크
 		User followerUser = userDetails.getUser();
 
@@ -61,6 +66,8 @@ public class FollowService {
 				.orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 아닙니다"));
 
 		followRepository.delete(follow);
+
+		return ResponseEntity.ok().body(new ApiException("팔로우 취소 성공. 취소한 유저이름 : " + followingUser.getUsername(), HttpStatus.OK.value()));
 	}
 
 }

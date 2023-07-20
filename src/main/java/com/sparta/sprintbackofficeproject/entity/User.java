@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -34,6 +37,12 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    @OneToMany(mappedBy = "followingUser", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Follow> followsMeList = new ArrayList<>(); // '나를 팔로우'하는 사람들 (나를 팔로잉 하는 필드)
+
+    @OneToMany(mappedBy = "followerUser", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Follow> iFollowList = new ArrayList<>(); // '내가 팔로우'하는 사람들 (=내가 팔로워인 필드)
 
     @Builder
     public User(String username, String password, String email, String imageUrl, UserRoleEnum role) {

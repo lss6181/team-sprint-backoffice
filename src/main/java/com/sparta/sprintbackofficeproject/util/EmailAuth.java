@@ -12,21 +12,22 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class EmailAuth {
     private final JavaMailSender mailSender;
+    private final RedisUtil redisUtil;
 
     // 인증코드 8자리 무작위 생성
     public String createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
-        for(int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             int idx = random.nextInt(3);
 
             switch (idx) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
+                case 0:
+                    key.append((char) ((int) random.nextInt(26) + 97));
                     break;
                 case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
+                    key.append((char) ((int) random.nextInt(26) + 65));
                     break;
                 case 2:
                     key.append(random.nextInt(9));
@@ -37,7 +38,7 @@ public class EmailAuth {
     }
 
     // 메일 양식 작성
-    public void createEmailForm(String email) throws MessagingException {
+    public void sendEmail(String email) throws MessagingException {
         String authCode = createCode();
         String setFrom = "Sprint";
         String toEmail = email;
@@ -48,7 +49,7 @@ public class EmailAuth {
         message.setSubject(title);
 
         // 메일 내용
-        String msgOfEmail="";
+        String msgOfEmail = "";
         msgOfEmail += "<div style='margin:20px;'>";
         msgOfEmail += "<h1> 안녕하세요 Sprint 입니다. </h1>";
         msgOfEmail += "<br>";
@@ -65,5 +66,7 @@ public class EmailAuth {
         message.setText(msgOfEmail, "utf-8", "html");
 
         mailSender.send(message);
+
+        redisUtil.setDataExpire(email, authCode, 300);
     }
 }

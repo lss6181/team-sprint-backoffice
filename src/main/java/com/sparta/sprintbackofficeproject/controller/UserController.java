@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -26,7 +27,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiException> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiException> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) throws MessagingException {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if (fieldErrors.size() > 0) {
             for (FieldError fieldError : fieldErrors) {
@@ -37,12 +38,17 @@ public class UserController {
             }
         }
         userService.signup(requestDto);
-        return ResponseEntity.ok().body(new ApiException("회원가입 성공", HttpStatus.OK.value()));
+        return ResponseEntity.ok().body(new ApiException("인증 메일이 발송되었습니다.", HttpStatus.OK.value()));
     }
 
     @PostMapping("/signup/email-auth")
-    public void emailAuth(@RequestBody EmailRequestDto requestDto) throws MessagingException {
-        userService.sendEmail(requestDto.getEmail());
+    public ResponseEntity<ApiException> verifyCode(@RequestBody EmailRequestDto requestDto) throws IOException {
+        if (userService.verifyCode(requestDto.getEmail(), requestDto.getCode())) {
+
+            userService.saveUserAfterVerify(requestDto.getEmail());
+            return ResponseEntity.ok().body(new ApiException("회원가입 완료", HttpStatus.OK.value()));
+        }
+        return ResponseEntity.badRequest().body(new ApiException("인증 코드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
 

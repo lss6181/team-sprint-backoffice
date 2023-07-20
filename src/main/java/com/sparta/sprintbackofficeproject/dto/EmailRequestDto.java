@@ -9,4 +9,6 @@ public class EmailRequestDto {
     @NotBlank
     @Email
     private String email;
+
+    private String code;
 }

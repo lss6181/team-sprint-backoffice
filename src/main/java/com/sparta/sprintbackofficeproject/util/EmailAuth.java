@@ -1,6 +1,5 @@
 package com.sparta.sprintbackofficeproject.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +19,15 @@ public class EmailAuth {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
-        for(int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             int idx = random.nextInt(3);
 
             switch (idx) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
+                case 0:
+                    key.append((char) ((int) random.nextInt(26) + 97));
                     break;
                 case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
+                    key.append((char) ((int) random.nextInt(26) + 65));
                     break;
                 case 2:
                     key.append(random.nextInt(9));
@@ -50,7 +49,7 @@ public class EmailAuth {
         message.setSubject(title);
 
         // 메일 내용
-        String msgOfEmail="";
+        String msgOfEmail = "";
         msgOfEmail += "<div style='margin:20px;'>";
         msgOfEmail += "<h1> 안녕하세요 Sprint 입니다. </h1>";
         msgOfEmail += "<br>";

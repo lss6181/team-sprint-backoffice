@@ -81,7 +81,7 @@ public class UserService {
     }
 
     // 유저 프로필 조회
-    public UserProfileResponseDto getUserProfile(User user, Long userId) {
+    public UserProfileResponseDto getUserProfile(Long userId) {
         User targetUser = findUser(userId);
 
         // targetUser의 팔로잉

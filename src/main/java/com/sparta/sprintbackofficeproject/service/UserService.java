@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final FileUploadService fileUploadService;
     private final EmailAuth emailAuth;
     private final RedisUtil redisUtil;
 
@@ -104,13 +107,23 @@ public class UserService {
 
     // 유저 정보 수정
     @Transactional
-    public ModifyResponseDto modifyProfile(User user, ModifyRequestDto modifyRequestDto, Long userId) {
+    public ModifyResponseDto modifyProfile(User user, Long userId, ModifyRequestDto modifyRequestDto, MultipartFile file) throws IOException {
         User targetUser = findUser(userId);
 
         // 유저 정보 수정은 관리자 혹은 유저 본인만 수정 가능
         if (!(user.getRole().equals(UserRoleEnum.ADMIN) || targetUser.getId().equals(user.getId()))) {
             throw new RejectedExecutionException();
         } else {
+            if (file != null) {  // 수정 내용중 사진 수정이 있을경우
+                if (targetUser.getImageUrl() != null && targetUser.getImageUrl() != "") { // 기존에 사진이 존재할 경우
+                    fileUploadService.deleteFile(targetUser.getImageUrl()); //사진 삭제
+                }
+            }
+            String imageUrl = fileUploadService.uploadFile(file); // 파일 업로드
+            String encodedPassword = passwordEncoder.encode(modifyRequestDto.getPassword());
+            modifyRequestDto.setImageUrl(imageUrl);
+            modifyRequestDto.setPassword(encodedPassword);
+
             targetUser.modifyProfile(modifyRequestDto);
             return new ModifyResponseDto("프로필 변경이 완료되었습니다.", 201);
         }

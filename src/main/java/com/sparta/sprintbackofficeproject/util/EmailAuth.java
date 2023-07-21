@@ -69,4 +69,27 @@ public class EmailAuth {
 
         redisUtil.setDataExpire(email, authCode, 300);
     }
+
+    // 신고 처리 결과 메일 전송 기능에 사용됨
+    public void sendReportResultEmail(String toEmail, String title, String content) throws MessagingException {
+        String setFrom = "Sprint";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
+        message.setSubject(title);
+
+        // 메일 내용
+        String msgOfEmail = "";
+        msgOfEmail += "<div style='margin:20px;'>";
+        msgOfEmail += "<h1> 안녕하세요 Sprint 입니다. </h1>";
+        msgOfEmail += "<br>";
+        msgOfEmail += "<p>" + content + "<p>";
+        msgOfEmail += "<br>";
+        msgOfEmail += "</div>";
+
+        message.setFrom(setFrom);
+        message.setText(msgOfEmail, "utf-8", "html");
+
+        mailSender.send(message);
+    }
 }

@@ -3,10 +3,14 @@ package com.sparta.sprintbackofficeproject.controller;
 import com.sparta.sprintbackofficeproject.dto.DailyStatisticsDto;
 import com.sparta.sprintbackofficeproject.dto.NoticeDto;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
+import com.sparta.sprintbackofficeproject.entity.Report;
 import com.sparta.sprintbackofficeproject.service.AdminService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -49,5 +53,17 @@ public class AdminController {
     @GetMapping("/daily-stats")
     public ResponseEntity<DailyStatisticsDto> getDailyStatistics() {
         return ResponseEntity.ok(adminService.getDailyStatistics());
+    }
+
+    @GetMapping("/reports")
+    public ResponseEntity<List<Report>> getAllReports() {
+        List<Report> reports = adminService.getAllReports();
+        return ResponseEntity.ok(reports);
+    }
+
+    @PostMapping("/reports/{reportId}")
+    public ResponseEntity<Void> processReport(@PathVariable Long reportId) throws MessagingException {
+        adminService.processReport(reportId);
+        return ResponseEntity.ok().build();
     }
 }

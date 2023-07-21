@@ -3,12 +3,16 @@ package com.sparta.sprintbackofficeproject.service;
 import com.sparta.sprintbackofficeproject.dto.DailyStatisticsDto;
 import com.sparta.sprintbackofficeproject.dto.NoticeDto;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
+import com.sparta.sprintbackofficeproject.dto.ReportRequestDto;
 import com.sparta.sprintbackofficeproject.entity.*;
 import com.sparta.sprintbackofficeproject.repository.*;
+import com.sparta.sprintbackofficeproject.util.EmailAuth;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -27,10 +31,16 @@ public class AdminService {
     private NoticeRepository noticeRepository;
 
     @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
     private MostLikedPostsStatisticsRepository mostLikedPostsStatisticsRepository;
 
     @Autowired
     private MostUsedHashTagsStatisticsRepository mostUsedHashTagsStatisticsRepository;
+
+    @Autowired
+    private EmailAuth emailAuth;
 
     // 공지사항 관련 기능
     public void createNotice(NoticeDto noticeDto) {
@@ -109,5 +119,28 @@ public class AdminService {
         MostUsedHashTagsStatistics mostUsedHashTagsStatistics = mostUsedHashTagsStatisticsRepository.findTopByOrderByIdDesc();
 
         return new DailyStatisticsDto(mostLikedPostsStatistics, mostUsedHashTagsStatistics);
+    }
+
+    // 사용자 신고 관련 기능
+
+    public List<Report> getAllReports() {
+        return reportRepository.findAll();
+    }
+
+    @Transactional
+    public void processReport(Long reportId) throws MessagingException {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고가 존재하지 않습니다."));
+
+        Post reportedPost = report.getPost();
+        postRepository.delete(reportedPost); // 게시물 삭제
+
+        String title = "신고 처리 결과";
+        String emailContent = "<h1>안녕하세요, " + report.getReporter().getUsername() + "님.</h1>"  // getUsername()으로 수정했습니다.
+                + "<p>신고한 게시물에 대한 조치가 완료되었습니다. 해당 게시물은 삭제 되었습니다.</p>";
+
+        emailAuth.sendReportResultEmail(report.getReporter().getEmail(), title, emailContent);  // 이메일 보내기
+
+        reportRepository.delete(report); // 신고 처리 후 해당 신고 내역 삭제
     }
 }

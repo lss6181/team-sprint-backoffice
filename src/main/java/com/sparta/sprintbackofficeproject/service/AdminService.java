@@ -77,6 +77,7 @@ public class AdminService {
     }
 
     // 매일 자정 좋아요 / 태그 가장 많은 게시글 top5 db 저장 스케쥴링 기능
+    @Scheduled(cron = "0 0 0 * * ?")
     public void generateStatistics() {
         LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
 

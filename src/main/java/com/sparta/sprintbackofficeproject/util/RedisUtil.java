@@ -17,7 +17,6 @@ import java.util.Optional;
 public class RedisUtil {
     private final StringRedisTemplate template;
 
-
     public void setDataExpire(String key, String value, long duration) {
         ValueOperations<String, String> valueOperations = template.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);

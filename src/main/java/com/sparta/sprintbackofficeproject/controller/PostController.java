@@ -30,7 +30,7 @@ public class PostController {
 
     //전체 게시글 조회
     @GetMapping("/posts")
-    public List<PostResponseDto> Home(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<PostResponseDto> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.getPosts(userDetails.getUser());
     }
 

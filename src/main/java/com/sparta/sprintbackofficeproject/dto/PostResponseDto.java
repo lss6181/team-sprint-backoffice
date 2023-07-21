@@ -26,12 +26,14 @@ public class PostResponseDto extends ApiException {
     private int likeCount;  // 좋아요 수 필드
     private List<TagUserResponseDto> tagUsers;    // 태그한 유저들
     private List<HashTagResponseDto> hashTags;  // 해쉬태그 필드
+    private String buketName;
 
     public PostResponseDto(Post post) {
         this.Id = post.getId();
         this.UserName = post.getUser().getUsername();
         this.content = post.getContent();
-        this.imageUrl = ("https://happiipark-first-bucket.s3.ap-northeast-2.amazonaws.com/" + post.getImageUrl());
+        this.buketName = post.getBuketName();
+        this.imageUrl = ("https://" + buketName + ".s3.ap-northeast-2.amazonaws.com/" + post.getImageUrl());
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();

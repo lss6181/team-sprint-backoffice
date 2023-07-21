@@ -46,6 +46,11 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<HashTag> hashTagList = new ArrayList<>();  // 게시글의 해쉬태그 관계설정
 
+    private String buketName;
+
+    public void setBuketName(String buketName) {
+        this.buketName = buketName;
+    }
 
     public Post(PostRequestDto requestDto) {
         this.Content = requestDto.getContent();

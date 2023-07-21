@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
@@ -26,6 +27,12 @@ public class PostController {
     private final PostService postService;
     private final AmazonS3 amazonS3;
 
+
+    //전체 게시글 조회
+    @GetMapping("/posts")
+    public List<PostResponseDto> Home(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.getPosts(userDetails.getUser());
+    }
 
     // 특정 게시글 조회
     @GetMapping("/posts/{postId}")

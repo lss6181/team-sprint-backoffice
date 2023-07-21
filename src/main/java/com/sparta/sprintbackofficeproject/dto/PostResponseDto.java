@@ -31,7 +31,7 @@ public class PostResponseDto extends ApiException {
         this.Id = post.getId();
         this.UserName = post.getUser().getUsername();
         this.content = post.getContent();
-        this.imageUrl = post.getImageUrl();
+        this.imageUrl = ("https://happiipark-first-bucket.s3.ap-northeast-2.amazonaws.com/" + post.getImageUrl());
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();

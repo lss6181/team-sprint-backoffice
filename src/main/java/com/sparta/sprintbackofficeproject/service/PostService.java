@@ -8,6 +8,7 @@ import com.sparta.sprintbackofficeproject.repository.PostRepository;
 import com.sparta.sprintbackofficeproject.repository.TagUserInPostRepository;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,9 @@ public class PostService {
     private final HashTagRepository hashTagRepository;
     private final FileUploadService fileUploadService;
     private String ImageUrl;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String buketName;
 
     //전체 게시글 조회하기
     public List<PostResponseDto> getPosts(User user) {
@@ -58,6 +62,7 @@ public class PostService {
         requestDto.setImageUrl(ImageUrl);
         Post post = new Post(requestDto);
         post.setUser(user);
+        post.setBuketName(buketName);
 
         postRepository.save(post);
 

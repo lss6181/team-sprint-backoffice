@@ -8,6 +8,7 @@ import com.sparta.sprintbackofficeproject.entity.*;
 import com.sparta.sprintbackofficeproject.repository.*;
 import com.sparta.sprintbackofficeproject.util.EmailAuth;
 import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,27 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private HashTagRepository hashTagRepository;
-
-    @Autowired
-    private NoticeRepository noticeRepository;
-
-    @Autowired
-    private ReportRepository reportRepository;
-
-    @Autowired
-    private MostLikedPostsStatisticsRepository mostLikedPostsStatisticsRepository;
-
-    @Autowired
-    private MostUsedHashTagsStatisticsRepository mostUsedHashTagsStatisticsRepository;
-
-    @Autowired
-    private EmailAuth emailAuth;
+    private final PostRepository postRepository;
+    private final HashTagRepository hashTagRepository;
+    private final NoticeRepository noticeRepository;
+    private final ReportRepository reportRepository;
+    private final MostLikedPostsStatisticsRepository mostLikedPostsStatisticsRepository;
+    private final MostUsedHashTagsStatisticsRepository mostUsedHashTagsStatisticsRepository;
+    private final EmailAuth emailAuth;
 
     // 공지사항 관련 기능
     public void createNotice(NoticeDto noticeDto) {
@@ -81,7 +70,7 @@ public class AdminService {
     public void generateStatistics() {
         LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
 
-        List<Post> top5MostLikedPosts = postRepository.findTop5ByCreatedAtAfterOrderByLikePostListSizeDesc(startOfDay);
+        List<Post> top5MostLikedPosts = postRepository.findTop5ByCreatedAtAfterOrderByLikePostListSizeDesc(startOfDay, PageRequest.of(0, 5));
         List<Long> postIds = new ArrayList<>();
         List<String> postContents = new ArrayList<>();
         List<Long> likeCounts = new ArrayList<>();

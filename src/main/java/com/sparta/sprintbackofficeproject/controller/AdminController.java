@@ -6,7 +6,6 @@ import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.entity.Report;
 import com.sparta.sprintbackofficeproject.service.AdminService;
 import jakarta.mail.MessagingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -4,6 +4,7 @@ import com.sparta.sprintbackofficeproject.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -27,4 +28,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 "                                 or f.follower_user_id = ?1),\n" +
                 "                p.created_at, (if(max(lp.created_at) > p.created_at, max(lp.created_at), p.created_at))) desc", nativeQuery = true)
     List<Post> findPost1(Long id);
+    List<Post> findTop5ByCreatedAtAfterOrderByLikePostListSizeDesc(LocalDateTime startOfDay);
+    List<Post> findTop5ByCreatedAtAfterOrderByTagUserInPostListSizeDesc(LocalDateTime startOfDay);
 }

@@ -11,6 +11,7 @@ import com.sparta.sprintbackofficeproject.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,5 +122,49 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("선택한 유저는 존재하지 않습니다.")
         );
+    }
+
+    // 유저 정보 조회
+    public User getUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. : " + username));
+    }
+
+    // 유저 정보 수정
+    public User modifyUser(String username, ModifyRequestDto modifyRequestDto) {
+        User user = getUser(username);
+        user.modifyProfile(modifyRequestDto);
+        return userRepository.save(user);
+    }
+
+    // 유저 삭제
+    public void deleteUser(String username) {
+        User user = getUser(username);
+        userRepository.delete(user);
+    }
+
+    // 유저 관리자 승격
+    public User promoteToAdmin(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + id));
+        user.upgradeToAdmin();
+        userRepository.save(user);
+        return user;
+    }
+
+    // 유저 차단
+
+    public void blockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + id));
+        user.block();
+        userRepository.save(user);
+    }
+
+    public void unblockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + id));
+        user.unblock();
+        userRepository.save(user);
     }
 }

@@ -36,7 +36,9 @@ public class FileUploadService {
         amazonS3.putObject(new PutObjectRequest(bucketName, safeFileName, convertedFile)
                 .withCannedAcl(CannedAccessControlList.PublicRead)); // public 권한 설정
         convertedFile.delete();
-        return safeFileName;
+
+        String imageUrl = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + safeFileName;
+        return imageUrl;
     }
 
     private File convertMultiPartFileToFile(MultipartFile file) throws IOException {

@@ -29,9 +29,6 @@ public class PostService {
     private final FileUploadService fileUploadService;
     private String ImageUrl;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String buketName;
-
     //전체 게시글 조회하기
     public List<PostResponseDto> getPosts(User user) {
         List<Post> postList = postRepository.findPost1(user.getId());
@@ -62,7 +59,6 @@ public class PostService {
         requestDto.setImageUrl(ImageUrl);
         Post post = new Post(requestDto);
         post.setUser(user);
-        post.setBuketName(buketName);
 
         postRepository.save(post);
 
@@ -87,9 +83,8 @@ public class PostService {
             }
         }
         ImageUrl = fileUploadService.uploadFile(file); // 파일 업로드
-
-
         requestDto.setImageUrl(ImageUrl);
+
         post.setContent(requestDto.getContent());
         post.setImageUrl(requestDto.getImageUrl());
 

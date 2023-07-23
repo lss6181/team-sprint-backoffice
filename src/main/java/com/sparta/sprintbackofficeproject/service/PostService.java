@@ -12,10 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 
 @Service
@@ -24,10 +22,13 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikePostRepository likePostRepository;
     private final NoticeRepository noticeRepository;
     private final TagUserInPostRepository tagUserInPostRepository;
     private final HashTagRepository hashTagRepository;
     private final FileUploadService fileUploadService;
+    private final LikeNoticeRepository likeNoticeRepository;
+
     private String ImageUrl;
 
     //전체 게시글 조회하기
@@ -37,12 +38,15 @@ public class PostService {
 
         List<TimelineItemDto> timeline = new ArrayList<>();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 HH:mm:ss", Locale.KOREAN);
+
         // 게시글을 TimelineItemDto로 변환
         for (Post post : postList) {
             TimelineItemDto item = new TimelineItemDto();
             item.setId(post.getId());
             item.setContent(post.getContent());
-            item.setCreatedAt(post.getCreatedAt().toString());
+            item.setCreatedAt(post.getCreatedAt().format(formatter));
+            item.setLikes(likePostRepository.countByPostId(post.getId()));
             item.setItemType("post");
             timeline.add(item);
         }
@@ -52,17 +56,14 @@ public class PostService {
             TimelineItemDto item = new TimelineItemDto();
             item.setId(notice.getId());
             item.setContent(notice.getContent());
-            item.setCreatedAt(notice.getCreatedAt().toString());
+            item.setCreatedAt(notice.getCreatedAt().format(formatter));
+            item.setLikes(likeNoticeRepository.countByNoticeId(notice.getId())); // 공지사항의 좋아요 수를 구함
             item.setItemType("notice");
             timeline.add(item);
         }
 
         // timeline을 createdAt 기준으로 정렬
-        Collections.sort(timeline, new Comparator<TimelineItemDto>() {
-            public int compare(TimelineItemDto o1, TimelineItemDto o2) {
-                return o2.getCreatedAt().compareTo(o1.getCreatedAt());
-            }
-        });
+        timeline.sort(Comparator.comparing(TimelineItemDto::getCreatedAt).reversed());
 
         return timeline;
     }

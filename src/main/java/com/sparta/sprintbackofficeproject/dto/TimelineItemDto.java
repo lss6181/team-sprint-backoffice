@@ -10,4 +10,5 @@ public class TimelineItemDto {
     private String Content;
     private String createdAt;
     private String itemType;
+    private int likes;
 }

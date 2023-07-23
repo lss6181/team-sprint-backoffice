@@ -64,31 +64,34 @@ public class AdminService {
         postRepository.deleteById(id);
     }
 
-    // 매일 자정 좋아요 / 태그 가장 많은 게시글 top5 db 저장 스케쥴링 기능
-    @Scheduled(cron = "0 28 11 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void generateStatistics() {
         LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
 
         List<Post> top5MostLikedPosts = postRepository.findTop5ByCreatedAtAfterOrderByLikePostListSizeDesc(startOfDay, PageRequest.of(0, 5));
-        List<Long> postIds = new ArrayList<>();
-        List<String> postContents = new ArrayList<>();
-        List<Long> likeCounts = new ArrayList<>();
+
+        List<MostLikedPost> mostLikedPosts = new ArrayList<>();
         for (Post post : top5MostLikedPosts) {
-            postIds.add(post.getId());
-            postContents.add(post.getContent());
-            likeCounts.add((long) post.getLikePostList().size());
+            MostLikedPost mostLikedPost = new MostLikedPost();
+            mostLikedPost.setPostId(post.getId());
+            mostLikedPost.setContent(post.getContent());
+            mostLikedPost.setLikeCount((long) post.getLikePostList().size());
+            mostLikedPosts.add(mostLikedPost);
         }
-        MostLikedPostsStatistics mostLikedPostsStatistics = new MostLikedPostsStatistics(postIds, postContents, likeCounts);
+        MostLikedPostsStatistics mostLikedPostsStatistics = new MostLikedPostsStatistics();
+        mostLikedPostsStatistics.setMostLikedPosts(mostLikedPosts);
         mostLikedPostsStatisticsRepository.save(mostLikedPostsStatistics);
 
         List<Object[]> top5MostUsedHashTags = hashTagRepository.findTop5MostUsedHashTags(PageRequest.of(0, 5));
-        List<String> hashTags = new ArrayList<>();
-        List<Long> counts = new ArrayList<>();
+        List<MostUsedHashTag> mostUsedHashTags = new ArrayList<>();
         for (Object[] object : top5MostUsedHashTags) {
-            hashTags.add((String) object[0]);
-            counts.add(((Number) object[1]).longValue());
+            MostUsedHashTag mostUsedHashTag = new MostUsedHashTag();
+            mostUsedHashTag.setHashTag((String) object[0]);
+            mostUsedHashTag.setCount(((Number) object[1]).longValue());
+            mostUsedHashTags.add(mostUsedHashTag);
         }
-        MostUsedHashTagsStatistics mostUsedHashTagsStatistics = new MostUsedHashTagsStatistics(hashTags, counts);
+        MostUsedHashTagsStatistics mostUsedHashTagsStatistics = new MostUsedHashTagsStatistics();
+        mostUsedHashTagsStatistics.setMostUsedHashTags(mostUsedHashTags);
         mostUsedHashTagsStatisticsRepository.save(mostUsedHashTagsStatistics);
     }
 

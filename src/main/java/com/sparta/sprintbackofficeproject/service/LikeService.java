@@ -2,10 +2,7 @@ package com.sparta.sprintbackofficeproject.service;
 
 
 import com.sparta.sprintbackofficeproject.entity.*;
-import com.sparta.sprintbackofficeproject.repository.CommentRepository;
-import com.sparta.sprintbackofficeproject.repository.LikeCommentRepository;
-import com.sparta.sprintbackofficeproject.repository.LikePostRepository;
-import com.sparta.sprintbackofficeproject.repository.PostRepository;
+import com.sparta.sprintbackofficeproject.repository.*;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +15,9 @@ public class LikeService {
 	private final CommentRepository commentRepository;
 	private final LikePostRepository likePostRepository;
 	private final LikeCommentRepository likeCommentRepository;
+	private final LikeNoticeRepository likeNoticeRepository;
+	private final UserRepository userRepository;
+	private final NoticeRepository noticeRepository;
 
 
 	// 게시글 좋아요
@@ -132,6 +132,26 @@ public class LikeService {
 		boolean result = !(user.getId() == likeId)
 				&& !(user.getRole().equals(UserRoleEnum.ADMIN));
 		return result;
+	}
+
+	// 공지 좋아요
+	public void onClickLikeNotice(UserDetailsImpl userDetails, Long noticeId) {
+		User user = userRepository.findById(userDetails.getUser().getId())
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + userDetails.getUser().getId()));
+		Notice notice = noticeRepository.findById(noticeId)
+				.orElseThrow(() -> new IllegalArgumentException("해당 공지 ID를 찾을 수 없습니다. : " + noticeId));
+
+		likeNoticeRepository.save(new LikeNotice(notice, user));
+	}
+
+	// 공지 좋아요 취소
+	public void deleteLikeNotice(UserDetailsImpl userDetails, Long likeNoticeId) {
+		User user = userRepository.findById(userDetails.getUser().getId())
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + userDetails.getUser().getId()));
+		LikeNotice likeNotice = likeNoticeRepository.findById(likeNoticeId)
+				.orElseThrow(() -> new IllegalArgumentException("해당 좋아요 ID를 찾을 수 없습니다. : " + likeNoticeId));
+
+		likeNoticeRepository.deleteByNoticeIdAndUserId(likeNotice.getNotice().getId(), user.getId());
 	}
 }
 

@@ -1,28 +1,27 @@
 package com.sparta.sprintbackofficeproject.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+
 @Getter
+@Setter
 @NoArgsConstructor
-public class MostLikedPostsStatistics extends Statistics {
+@AllArgsConstructor
+@Entity
+public class MostLikedPostsStatistics {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ElementCollection
-    private List<Long> postIds;
+    @OneToMany
+    private List<MostLikedPost> mostLikedPosts;
 
-    @ElementCollection
-    private List<String> postTitles;
-
-    @ElementCollection
-    private List<Long> likeCounts;
-
-    public MostLikedPostsStatistics(List<Long> postIds, List<String> postTitles, List<Long> likeCounts) {
-        super();
-        this.postIds = postIds;
-        this.postTitles = postTitles;
-        this.likeCounts = likeCounts;
-    }
+    private LocalDateTime generatedAt;
 }

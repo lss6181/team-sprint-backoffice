@@ -51,4 +51,18 @@ public class LikeController {
 
 		return ResponseEntity.ok().body(new ApiException("좋아요 취소 성공", HttpStatus.OK.value()));
 	}
+
+	// 공지 좋아요
+	@PostMapping("/notices/{noticeId}")
+	public ResponseEntity<ApiException> onClickLikeNotice(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long noticeId) {
+		likeService.onClickLikeNotice(userDetails, noticeId);
+		return ResponseEntity.ok().body(new ApiException("공지 좋아요 성공", HttpStatus.OK.value()));
+	}
+
+	// 공지 좋아요 취소
+	@DeleteMapping("/notices/{likeNoticeId}")
+	public ResponseEntity<ApiException> deleteLikeNotice(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long likeNoticeId) {
+		likeService.deleteLikeNotice(userDetails, likeNoticeId);
+		return ResponseEntity.ok().body(new ApiException("공지 좋아요 취소 성공", HttpStatus.OK.value()));
+	}
 }

@@ -46,7 +46,6 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<HashTag> hashTagList = new ArrayList<>();  // 게시글의 해쉬태그 관계설정
 
-
     public Post(PostRequestDto requestDto) {
         this.Content = requestDto.getContent();
         this.ImageUrl = requestDto.getImageUrl();

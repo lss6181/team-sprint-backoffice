@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,13 +60,15 @@ public class UserController {
     public ResponseEntity<ApiException> getUserProfile(@PathVariable Long userId) {
         UserProfileResponseDto result = userService.getUserProfile(userId);
         return ResponseEntity.ok().body(result);
-
     }
 
     // 프로필 수정
     @PutMapping("/profile/{userId}")
-    public ResponseEntity<ApiException> modifyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ModifyRequestDto modifyRequestDto, @PathVariable Long userId) {
-        ModifyResponseDto result = userService.modifyProfile(userDetails.getUser(), modifyRequestDto, userId);
+    public ResponseEntity<ApiException> modifyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                      @PathVariable Long userId,
+                                                      @RequestPart(value = "requestDto") ModifyRequestDto requestDto,
+                                                      @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        ModifyResponseDto result = userService.modifyProfile(userDetails.getUser(), userId, requestDto, file);
         return ResponseEntity.ok().body(result);
     }
 

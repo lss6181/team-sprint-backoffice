@@ -25,8 +25,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String token = jwtUtil.createToken(username, role);
         token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
 
-        // 토큰 반환
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
-        log.info("로그인성공");
+        Cookie cookie = new Cookie(jwtUtil.AUTHORIZATION_HEADER, token); // 쿠키 생성, 토큰 담기
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        response.sendRedirect("/");
+        log.info("로그인 성공");
     }
 }

@@ -1,16 +1,22 @@
 package com.sparta.sprintbackofficeproject.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
 import com.sparta.sprintbackofficeproject.exception.ApiException;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import com.sparta.sprintbackofficeproject.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
@@ -19,7 +25,14 @@ import java.util.concurrent.RejectedExecutionException;
 public class PostController {
 
     private final PostService postService;
+    private final AmazonS3 amazonS3;
 
+
+    //전체 게시글 조회
+    @GetMapping("/posts")
+    public List<PostResponseDto> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.getPosts(userDetails.getUser());
+    }
 
     // 특정 게시글 조회
     @GetMapping("/posts/{postId}")
@@ -30,18 +43,18 @@ public class PostController {
     }
 
     // 게시글 작성
-    @PostMapping("/posts")
-    public ResponseEntity<PostResponseDto> createPost(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
-        PostResponseDto result = postService.createPost(requestDto, userDetails.getUser());
+    @PostMapping(value = "/posts")
+    public ResponseEntity<PostResponseDto> createPost(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestPart(value = "requestDto") @Valid PostRequestDto requestDto, @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        PostResponseDto result = postService.createPost(requestDto, userDetails.getUser(), file);
 
         return ResponseEntity.status(201).body(result);
     }
 
     // 게시글 수정
-    @PutMapping("/posts/{postId}")
-    public ResponseEntity<ApiException> updatePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestBody PostRequestDto requestDto) {
+    @PutMapping(value = "/posts/{postId}")
+    public ResponseEntity<ApiException> updatePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestPart(value = "requestDto") @Valid PostRequestDto requestDto, @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         try {
-            PostResponseDto result = postService.updatePost(postId, requestDto, userDetails.getUser());
+            PostResponseDto result = postService.updatePost(postId, requestDto, userDetails.getUser(), file);
             return ResponseEntity.ok().body(result);
         } catch (RejectedExecutionException e) {
             return ResponseEntity.badRequest().body(new ApiException("작성자만 수정 할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));

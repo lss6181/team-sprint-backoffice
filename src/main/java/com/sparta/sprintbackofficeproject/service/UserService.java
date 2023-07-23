@@ -5,6 +5,7 @@ import com.sparta.sprintbackofficeproject.entity.Follow;
 import com.sparta.sprintbackofficeproject.entity.User;
 import com.sparta.sprintbackofficeproject.entity.UserRoleEnum;
 import com.sparta.sprintbackofficeproject.repository.FollowRepository;
+import com.sparta.sprintbackofficeproject.repository.LikePostRepository;
 import com.sparta.sprintbackofficeproject.repository.UserRepository;
 import com.sparta.sprintbackofficeproject.util.EmailAuth;
 import com.sparta.sprintbackofficeproject.util.RedisUtil;
@@ -30,6 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final LikePostRepository likePostRepository;
     private final FileUploadService fileUploadService;
     private final EmailAuth emailAuth;
     private final RedisUtil redisUtil;
@@ -144,16 +146,21 @@ public class UserService {
     }
 
     // 유저 정보 수정
-    public User modifyUser(String username, ModifyRequestDto modifyRequestDto) {
-        User user = getUser(username);
+    public User modifyUser(Long userId, ModifyRequestDto modifyRequestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + userId));
         user.modifyProfile(modifyRequestDto);
         return userRepository.save(user);
     }
 
     // 유저 삭제
-    public void deleteUser(String username) {
-        User user = getUser(username);
+    @Transactional
+    public User deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + userId));
+        likePostRepository.deleteByUserId(userId);
         userRepository.delete(user);
+        return user;
     }
 
     // 유저 관리자 승격
@@ -166,7 +173,6 @@ public class UserService {
     }
 
     // 유저 차단
-
     public void blockUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 ID를 찾을 수 없습니다. : " + id));

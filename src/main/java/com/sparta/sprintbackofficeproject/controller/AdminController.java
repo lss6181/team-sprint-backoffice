@@ -7,12 +7,14 @@ import com.sparta.sprintbackofficeproject.entity.Report;
 import com.sparta.sprintbackofficeproject.service.AdminService;
 import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -38,12 +40,12 @@ public class AdminController {
     }
 
     // 게시글 관리 (수정 / 삭제) 기능
-    @PutMapping("/post/{id}")
+    @PutMapping("/posts/{id}")
     public void updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
         adminService.updatePost(id, postRequestDto);
     }
 
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/posts/{id}")
     public void deletePost(@PathVariable Long id) {
         adminService.deletePost(id);
     }

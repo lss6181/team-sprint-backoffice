@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;

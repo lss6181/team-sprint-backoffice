@@ -83,16 +83,16 @@ public class UserController {
 
     // 유저 정보 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{username}")
-    public User modifyUser(@PathVariable String username, @RequestBody ModifyRequestDto modifyRequestDto) {
-        return userService.modifyUser(username, modifyRequestDto);
+    @PutMapping("/{userId}")
+    public User modifyUser(@PathVariable Long userId, @RequestBody ModifyRequestDto modifyRequestDto) {
+        return userService.modifyUser(userId, modifyRequestDto);
     }
 
     // 유저 삭제
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{username}")
-    public void deleteUser(@PathVariable String username) {
-        userService.deleteUser(username);
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
     }
 
     // 유저 관리자 승격

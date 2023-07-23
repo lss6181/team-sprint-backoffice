@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportRequestDto {
-
+public class ReportDto {
     private Long reporterId;
     private Long reportedUserId;
     private Long postId;

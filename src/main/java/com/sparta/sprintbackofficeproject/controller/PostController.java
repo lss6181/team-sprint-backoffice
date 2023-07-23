@@ -3,6 +3,7 @@ package com.sparta.sprintbackofficeproject.controller;
 import com.amazonaws.services.s3.AmazonS3;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
+import com.sparta.sprintbackofficeproject.dto.TimelineItemDto;
 import com.sparta.sprintbackofficeproject.exception.ApiException;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import com.sparta.sprintbackofficeproject.service.PostService;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @RequiredArgsConstructor
 public class PostController {
 
@@ -30,7 +31,7 @@ public class PostController {
 
     //전체 게시글 조회
     @GetMapping("/posts")
-    public List<PostResponseDto> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<TimelineItemDto> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.getPosts(userDetails.getUser());
     }
 

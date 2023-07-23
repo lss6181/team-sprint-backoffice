@@ -3,13 +3,12 @@ package com.sparta.sprintbackofficeproject.service;
 import com.sparta.sprintbackofficeproject.dto.DailyStatisticsDto;
 import com.sparta.sprintbackofficeproject.dto.NoticeDto;
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
-import com.sparta.sprintbackofficeproject.dto.ReportRequestDto;
 import com.sparta.sprintbackofficeproject.entity.*;
 import com.sparta.sprintbackofficeproject.repository.*;
 import com.sparta.sprintbackofficeproject.util.EmailAuth;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -66,7 +65,7 @@ public class AdminService {
     }
 
     // 매일 자정 좋아요 / 태그 가장 많은 게시글 top5 db 저장 스케쥴링 기능
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 28 11 * * ?")
     public void generateStatistics() {
         LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
 
@@ -123,14 +122,17 @@ public class AdminService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 신고가 존재하지 않습니다."));
 
         Post reportedPost = report.getPost();
+
+        // 게시물에 대한 모든 신고를 먼저 삭제합니다.
+        List<Report> reports = reportRepository.findAllByPostId(reportedPost.getId());
+        reportRepository.deleteAll(reports);
+
         postRepository.delete(reportedPost); // 게시물 삭제
 
         String title = "신고 처리 결과";
-        String emailContent = "<h1>안녕하세요, " + report.getReporter().getUsername() + "님.</h1>"  // getUsername()으로 수정했습니다.
+        String emailContent = report.getReporter().getUsername() + "님께서"  // getUsername()으로 수정했습니다.
                 + "<p>신고한 게시물에 대한 조치가 완료되었습니다. 해당 게시물은 삭제 되었습니다.</p>";
 
         emailAuth.sendReportResultEmail(report.getReporter().getEmail(), title, emailContent);  // 이메일 보내기
-
-        reportRepository.delete(report); // 신고 처리 후 해당 신고 내역 삭제
     }
 }

@@ -2,11 +2,9 @@ package com.sparta.sprintbackofficeproject.service;
 
 import com.sparta.sprintbackofficeproject.dto.PostRequestDto;
 import com.sparta.sprintbackofficeproject.dto.PostResponseDto;
+import com.sparta.sprintbackofficeproject.dto.TimelineItemDto;
 import com.sparta.sprintbackofficeproject.entity.*;
-import com.sparta.sprintbackofficeproject.repository.HashTagRepository;
-import com.sparta.sprintbackofficeproject.repository.PostRepository;
-import com.sparta.sprintbackofficeproject.repository.TagUserInPostRepository;
-import com.sparta.sprintbackofficeproject.repository.UserRepository;
+import com.sparta.sprintbackofficeproject.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -24,21 +24,47 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NoticeRepository noticeRepository;
     private final TagUserInPostRepository tagUserInPostRepository;
     private final HashTagRepository hashTagRepository;
     private final FileUploadService fileUploadService;
     private String ImageUrl;
 
     //전체 게시글 조회하기
-    public List<PostResponseDto> getPosts(User user) {
+    public List<TimelineItemDto> getPosts(User user) {
         List<Post> postList = postRepository.findPost1(user.getId());
-        List<PostResponseDto> responseDtoList = new ArrayList<>();
+        List<Notice> noticeList = noticeRepository.findAll(); // 공지사항 가져오기
 
+        List<TimelineItemDto> timeline = new ArrayList<>();
+
+        // 게시글을 TimelineItemDto로 변환
         for (Post post : postList) {
-            responseDtoList.add(new PostResponseDto(post));
+            TimelineItemDto item = new TimelineItemDto();
+            item.setId(post.getId());
+            item.setContent(post.getContent());
+            item.setCreatedAt(post.getCreatedAt().toString());
+            item.setItemType("post");
+            timeline.add(item);
         }
 
-        return responseDtoList;
+        // 공지사항을 TimelineItemDto로 변환
+        for (Notice notice : noticeList) {
+            TimelineItemDto item = new TimelineItemDto();
+            item.setId(notice.getId());
+            item.setContent(notice.getContent());
+            item.setCreatedAt(notice.getCreatedAt().toString());
+            item.setItemType("notice");
+            timeline.add(item);
+        }
+
+        // timeline을 createdAt 기준으로 정렬
+        Collections.sort(timeline, new Comparator<TimelineItemDto>() {
+            public int compare(TimelineItemDto o1, TimelineItemDto o2) {
+                return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+            }
+        });
+
+        return timeline;
     }
 
     @Transactional

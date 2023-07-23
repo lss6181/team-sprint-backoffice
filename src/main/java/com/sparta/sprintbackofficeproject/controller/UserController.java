@@ -1,6 +1,7 @@
 package com.sparta.sprintbackofficeproject.controller;
 
 import com.sparta.sprintbackofficeproject.dto.*;
+import com.sparta.sprintbackofficeproject.entity.User;
 import com.sparta.sprintbackofficeproject.exception.ApiException;
 import com.sparta.sprintbackofficeproject.security.UserDetailsImpl;
 import com.sparta.sprintbackofficeproject.service.UserService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -68,5 +70,52 @@ public class UserController {
                                                       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         ModifyResponseDto result = userService.modifyProfile(userDetails.getUser(), userId, requestDto, file);
         return ResponseEntity.ok().body(result);
+    }
+
+    /// 백오피스
+
+    // 유저 정보 조회
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{username}")
+    public User getUser(@PathVariable String username) {
+        return userService.getUser(username);
+    }
+
+    // 유저 정보 수정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{userId}")
+    public User modifyUser(@PathVariable Long userId, @RequestBody ModifyRequestDto modifyRequestDto) {
+        return userService.modifyUser(userId, modifyRequestDto);
+    }
+
+    // 유저 삭제
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+    }
+
+    // 유저 관리자 승격
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{userId}/admin")
+    public ResponseEntity<?> promoteToAdmin(@PathVariable Long userId) {
+        userService.promoteToAdmin(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 유저 차단
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{userId}/block")
+    public ResponseEntity<?> blockUser(@PathVariable Long userId) {
+        userService.blockUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 유저 차단 해제
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{userId}/unblock")
+    public ResponseEntity<?> unblockUser(@PathVariable Long userId) {
+        userService.unblockUser(userId);
+        return ResponseEntity.ok().build();
     }
 }

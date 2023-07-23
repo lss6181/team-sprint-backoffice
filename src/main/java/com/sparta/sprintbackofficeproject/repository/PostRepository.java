@@ -1,9 +1,12 @@
 package com.sparta.sprintbackofficeproject.repository;
 
 import com.sparta.sprintbackofficeproject.entity.Post;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -29,4 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 "                                   or tuip.user_id = ?1)," +
                 "                p.created_at, (if(max(lp.created_at) > p.created_at, max(lp.created_at), p.created_at))) desc", nativeQuery = true)
     List<Post> findPost1(Long id);
+    @Query("SELECT p FROM Post p WHERE p.createdAt > :startOfDay ORDER BY SIZE(p.likePostList) DESC")
+    List<Post> findTop5ByCreatedAtAfterOrderByLikePostListSizeDesc(@Param("startOfDay") LocalDateTime startOfDay, Pageable pageable);
+
 }

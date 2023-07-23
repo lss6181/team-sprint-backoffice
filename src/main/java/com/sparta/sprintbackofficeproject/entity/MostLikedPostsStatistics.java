@@ -1,23 +1,27 @@
 package com.sparta.sprintbackofficeproject.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+import java.time.LocalDateTime;
+import java.util.List;
+
+
 @Getter
 @Setter
-@Table
 @NoArgsConstructor
-public class Notice extends TimeStamped{
+@AllArgsConstructor
+@Entity
+public class MostLikedPostsStatistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String title;
+    @OneToMany
+    private List<MostLikedPost> mostLikedPosts;
 
-    @Column
-    private String content;
+    private LocalDateTime generatedAt;
 }

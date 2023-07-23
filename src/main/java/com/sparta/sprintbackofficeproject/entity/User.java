@@ -44,6 +44,17 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "followerUser", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Follow> iFollowList = new ArrayList<>(); // '내가 팔로우'하는 사람들 (=내가 팔로워인 필드)
 
+    @Column
+    private boolean isBlocked = false; // 유저 차단 여부 확인
+
+    public void block() {
+        this.isBlocked = true;
+    }
+
+    public void unblock() {
+        this.isBlocked = false;
+    }
+
     @Builder
     public User(String username, String password, String email, String imageUrl, UserRoleEnum role) {
         this.username = username;
@@ -72,5 +83,10 @@ public class User extends TimeStamped {
         this.imageUrl = modifyRequestDto.getImageUrl();
         this.introduction = modifyRequestDto.getIntroduction();
         this.password = modifyRequestDto.getPassword();
+    }
+
+    // 유저를 관리자로 승격
+    public void upgradeToAdmin() {
+        this.role = UserRoleEnum.ADMIN;
     }
 }
